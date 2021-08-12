@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 import folium
 import re
 # 출처: https://gist.github.com/markmarkoh/2969317
@@ -248,20 +249,42 @@ countries_data = {"type":"FeatureCollection","features":[
 {"type":"Feature","geometry":{"type":"MultiPolygon","coordinates":[[[[52.23,15.67],[43.96,12.59],[43.25,13.21],[42.79,16.38],[43.31,17.46],[44.47,17.41],[46.33,16.67],[46.33,15.62],[48.77,18.27],[52,19],[53.11,16.64],[52.3,16.27],[52.23,15.67]]]]},"properties":{"name":"Yemen"},"id":"YE"},
 {"type":"Feature","geometry":{"type":"MultiPolygon","coordinates":[[[[24.97,-17.56],[23.48,-17.63],[22,-16.17],[22,-13],[24.02,-13.01],[23.99,-10.87],[24.45,-11.46],[25.33,-11.19],[26,-11.9],[26.87,-11.97],[27.2,-11.57],[29.02,-13.4],[29.8,-13.45],[29.81,-12.16],[29.03,-12.38],[28.36,-11.55],[28.7,-10.65],[28.37,-9.26],[28.9,-8.48],[30.77,-8.19],[32.94,-9.41],[33.7,-10.56],[33.25,-10.89],[33.55,-12.36],[32.68,-13.61],[33.22,-14.01],[30.21,-14.98],[30.42,-15.63],[28.93,-15.97],[27.04,-17.96],[25.26,-17.8],[24.97,-17.56]]]]},"properties":{"name":"Zambia"},"id":"ZM"}]}
 # 출처: https://www.data.go.kr/data/15076566/fileData.do
-korea_english = pd.read_csv('외교부_국가·지역별 표준코드_20201231.csv', encoding='cp949')
+korea_english = pd.read_csv("외교부_국가·지역별 표준코드_20201231.csv", encoding="cp949")
 print(korea_english) # 각 나라의 한국이름과 ISO코드
 
 # countries_data의 features키 안의 id키에 있는 2자리 ISO코드에 맞춰
 # countries_data의 features키 안의 properties키 안에 kor_name이라는 키에
 # 각 나라의 한국이름 넣기
-for country_data in countries_data['features']:
+for country_data in countries_data["features"]:
     translate = korea_english.loc[
-                korea_english['ISO(2자리)']==country_data['id'],'국가명(국문)']\
+                korea_english["ISO(2자리)"]==country_data["id"],"국가명(국문)"]\
                 .squeeze() # Series를 string으로 변환하는 함수
     if type(translate)==str: # translate가 성공한 경우
-        country_data['properties']['korname'] = translate
+        if translate == "타이완": # 예외처리
+            translate = "대만"
+        elif translate == "대한민국":
+            translate = "한국"
+        elif translate == "호주":
+            translate = "오스트레일리아"
+        elif translate == "콩고공화국":
+            translate = "콩고"
+        elif translate == "콩고민주공화국(DR콩고)":
+            translate = "콩고민주공화국"
+        elif translate == "키르기즈":
+            translate = "키르기스스탄"
+        elif translate == "모리타니아":
+            translate = "모리타니"
+        country_data["properties"]["korname"] = translate
     else:
-        country_data['properties']['korname'] = 'blank'
+        country_data["properties"]["korname"] = "blank"
+# 번역한 경위도자료를 저장합니다.
+with open("countries_data.json", "w") as file:
+    json.dump(countries_data, file)
+del countries_data
+
+# 잘 저장되었는지 열어봅니다.
+with open ('countries_data.json', 'r', encoding='cp949') as file:
+    countries_data = json.load(file)
 
 # merge_csv_files.py의 결과물을 엽니다
 final_data = pd.read_csv('210809자료합친파일.csv', index_col=0)
