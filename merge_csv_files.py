@@ -6,7 +6,6 @@ fertility.columns = ['합계출산;'+i for i in fertility.columns]
 hdi = pd.read_csv('project_data/인간개발지수.csv',encoding='utf-8', header=[0,1])
 hdi.columns = [';'.join(i) for i in hdi.columns]
 hdi['국가별;국가별'] = hdi['국가별;국가별'].apply(lambda x: x.strip())
-hdi = hdi.replace(',','')
 hdi.iloc[:,-1] = hdi.iloc[:,-1].str.replace(',','') # comma문제 해결
 gdp = pd.read_csv('project_data/국민소득.csv', encoding='utf-8', header=[0,1])
 gdp.columns = [';'.join(i) for i in gdp.columns]
@@ -16,9 +15,9 @@ pop = pd.read_csv('project_data/인구_동향.csv', encoding='utf-8', header=[0,
 pop.columns = [';'.join(i) for i in pop.columns]
 action_man = pd.read_excel('project_data/경제활동참여율(남).xlsx').drop(columns='대륙')
 action_woman = pd.read_excel('project_data/경제활동참여율(여).xlsx').drop(columns='대륙')
-action_man = action_man.rename(columns = {'국가':'국가별;국가별',
+action_man = action_man.rename(columns = {'국가':'남경제;국가별',
                                           '경제활동참여율;2020':'경제활동참여율;남자'})
-action_woman = action_woman.rename(columns = {'국가':'국가별;국가별',
+action_woman = action_woman.rename(columns = {'국가':'여경제;국가별',
                                               '경제활동참여율;2020':'경제활동참여율;여자'})
 edu = pd.read_excel('project_data/교육정도별_취학률.xlsx', header=[0,1])
 edu[('국가별','국가별')] = np.repeat(edu[('국가별','국가별')]\
@@ -73,7 +72,6 @@ final_data = pd.concat([merged_df,rm_na_df], axis=0)
 final_data.set_index(['국가'], inplace=True)
 final_data.replace('-',np.NaN, inplace = True)
 #final_data.to_csv('210809자료합친파일.csv', encoding="utf-8-sig")
-for col in final_data.columns:
-    final_data[col] = final_data[col].apply(lambda data : data if pd.isna(data) else re.findall('[0-9.]+',str(data))[0])
+final_data = final_data.apply(lambda x: x.str.replace(' \(.{1,}','') if x.dtype=='O' else x)
 final_data = final_data.astype(float)
 final_data.to_csv('210809자료합친파일.csv', encoding="utf-8-sig")
