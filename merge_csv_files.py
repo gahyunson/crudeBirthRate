@@ -6,6 +6,8 @@ fertility.columns = ['합계출산;'+i for i in fertility.columns]
 hdi = pd.read_csv('project_data/인간개발지수.csv',encoding='utf-8', header=[0,1])
 hdi.columns = [';'.join(i) for i in hdi.columns]
 hdi['국가별;국가별'] = hdi['국가별;국가별'].apply(lambda x: x.strip())
+hdi = hdi.replace(',','')
+hdi.iloc[:,-1] = hdi.iloc[:,-1].str.replace(',','') # comma문제 해결
 gdp = pd.read_csv('project_data/국민소득.csv', encoding='utf-8', header=[0,1])
 gdp.columns = [';'.join(i) for i in gdp.columns]
 urban = pd.read_csv('project_data/도시화율.csv', encoding='utf-8')
