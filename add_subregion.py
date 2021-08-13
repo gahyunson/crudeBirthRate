@@ -18,4 +18,4 @@ iso_subregion = iso_code.merge(subregion, 'left',
                 ]
 iso_subregion.columns = ['국가']+list(iso_subregion.columns[1:])
 final_data = final_data.merge(iso_subregion, 'left', on = '국가')
-final_data.to_csv('210812자료합친파일.csv', index=False)
+final_data.to_csv('210809자료합친파일.csv', index=False)
