@@ -72,6 +72,6 @@ final_data.set_index(['국가'], inplace=True)
 final_data.replace('-',np.NaN, inplace = True)
 #final_data.to_csv('210809자료합친파일.csv', encoding="utf-8-sig")
 for col in final_data.columns:
-    final_data[col] = final_data[col].apply(lambda data : data if pd.isna(data) else re.findall('[0-9.]+',str(data))[0])
+    final_data[col] = final_data[col].apply(lambda data : data if pd.isna(data) else re.findall('[0-9.-]+',str(data))[0])
 final_data = final_data.astype(float)
 final_data.to_csv('210809자료합친파일.csv', encoding="utf-8-sig")
