@@ -14,7 +14,7 @@ urban.columns = ['도시화율;'+i for i in urban.columns]
 pop = pd.read_csv('project_data/인구_동향.csv', encoding='utf-8', header=[0,1])
 pop.columns = [';'.join(i) for i in pop.columns]
 consumer_price = pd.read_csv('project_data/소비자_물가지수.csv', encoding='utf-8', header=[0,1])
-consumer_price.columns = [';'.join(i) for i in consumer_price.columns]
+consumer_price.columns = ['물가지수;국가별'] + [';'.join(i) for i in consumer_price.columns[1:]]
 action_man = pd.read_excel('project_data/경제활동참여율(남).xlsx').drop(columns='대륙')
 action_woman = pd.read_excel('project_data/경제활동참여율(여).xlsx').drop(columns='대륙')
 action_man = action_man.rename(columns = {'국가':'남경제;국가별',
