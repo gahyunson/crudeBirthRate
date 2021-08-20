@@ -4,8 +4,25 @@ import platform
 
 final_data=pd.read_csv('210809자료합친파일.csv', index_col = 0)
 final_data['국가명'] = final_data.index
+
+def subregion_to_region(datum):
+    try:
+        if 'Asia' in datum:
+            return 'Asia'
+        elif 'Europe' in datum:
+            return 'Europe'
+        elif 'America' in datum:
+            return 'America'
+        elif 'Africa' in datum:
+            return 'Africa'
+        else:
+            return 'Other'
+    except:
+        return 'Other'
+final_data['region'] = final_data['sub-region'].apply(subregion_to_region)
+
 def makeDataframe(col, data):
-    data_df=data[[col,'합계출산;2020','국가명']]
+    data_df=data[[col,'합계출산;2020','국가명','region']]
     data_df=data_df[data_df['국가명']!='세계']
     data_df.sort_values(col, ascending=False, inplace=True)
     data_df=data_df.dropna()
@@ -15,6 +32,7 @@ def plotlyGraph(df,col):
     fig = px.scatter(df,
                      x = '합계출산;2020',
                      y = col,
+                     color = 'region',
                      hover_data = ['국가명'],
                      title = col+'& Birth rate',
                      labels = {'합계출산;2020':'2020 birthrate'})
